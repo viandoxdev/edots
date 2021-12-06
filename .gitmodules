@@ -1,0 +1,6 @@
+[submodule "config/zsh/pure"]
+	path = config/zsh/ext/pure
+	url = https://github.com/sindresorhus/pure
+[submodule "config/zsh/ext/zsh-history-substring-search"]
+	path = config/zsh/ext/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search

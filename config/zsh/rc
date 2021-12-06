@@ -1,0 +1,16 @@
+fpath+=$HOME/dots/config/zsh/ext/pure
+# prompt
+autoload -U promptinit
+promptinit
+prompt pure
+#history
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+# history substring-search
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=magenta,bold'
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
+source $HOME/dots/config/zsh/ext/zsh-history-substring-search/zsh-history-substring-search.zsh
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
