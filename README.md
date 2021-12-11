@@ -1,4 +1,4 @@
-# dots - my gentoo dots files
+# edots - my gentoo dots files
 
 ![background](bg.png)
 
@@ -9,6 +9,7 @@
  - Kitty
  - zsh
  - jetbrains mono
+ - wofi (soon)
 
 ## How to use
 
