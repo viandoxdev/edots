@@ -14,3 +14,6 @@ export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
 source $HOME/dots/config/zsh/ext/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
+# zsh-z
+source $HOME/dots/config/zsh/ext/zsh-z/zsh-z.plugin.zsh
+

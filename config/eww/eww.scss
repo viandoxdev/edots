@@ -1,0 +1,236 @@
+$color0: #090909;
+$color1: #FFFFFF;
+$color2: #191919;
+$color3: #BBBBBB;
+
+// terminal colors, from ../kitty/kitty.conf
+$term_color0: #101415; // black
+$term_color1: #C26F6F; // red
+$term_color2: #6BB05D; // green
+$term_color3: #E59E67; // yellow / orange
+$term_color4: #667B99; // blue / cyan
+$term_color5: #B185DB; // purple
+$term_color6: #779FA8; // cyan
+$term_color7: #C4C4C4; // white
+$term_color8: #131718; // bright black
+$term_color9: #F65B5B; // bright red
+$term_color10: #8DC776; // bright green
+$term_color11: #E7AC7E; // bright yellow
+$term_color12: #84A0C6; // bright blue / cyan
+$term_color13: #BB8FE5; // bright purple
+$term_color14: #89B8C2; // bright cyan
+$term_color15: #CCCCCC; // bright white
+
+$color_bat: #393939;
+
+* {
+	all: unset;
+}
+
+window {
+	background: none;
+}
+.icon {
+	font-family: Material Design Icons Desktop;
+	font-size: larger;
+	color: $color1;
+}
+.prog_inst > circular-progress {
+	background-color: $color2;
+}
+.prog_inst:not(:first-child) {
+	margin-top: 7px;
+}
+.prog {
+	font-size: smaller;
+	min-width: 40px;
+	min-height: 40px;
+	margin: 10px;
+	color: $color1;
+}
+.prog_wrap {
+	padding-left: 20px;
+	border-left: 1px solid $color2;
+}
+.prog_ram  { color: $term_color3; }
+.prog_cpu  { color: $term_color5; }
+.prog_disk { color: $term_color4; }
+.prog_label {
+	margin-left: 10px;
+}
+.space {
+	margin-top: 20px;
+}
+.bar_parent {
+	background: none;
+}
+.scales {
+	margin-left: 20px;
+	margin-top: 20px;
+}
+.scales > box:not(:first-child) {
+	margin-top: 10px;
+}
+.scale_label {
+	margin-left: 15px;
+	font-size: larger;
+}
+.scale {
+	background: $color2;
+	min-width: 240px;
+	min-height: 8px;
+	border-radius: 4px;
+}
+.scale trough {
+	min-height: 8px;
+	border-radius: 4px;
+}
+.scale trough highlight {
+	min-height: 8px;
+	background: $color1;
+	border-radius: 4px;
+}
+.s_sound      trough highlight { background: $term_color5; }
+.s_brightness trough highlight { background: $term_color11; }
+.mpd_wrap {
+	margin-top: 10px;
+	margin-left: 20px;
+}
+.mpd_track {
+	font-size: 0.9em;
+}
+.mpd_track_long {
+	font-size: 0.7em;
+}
+.mpd_button {
+	font-size: larger;
+}
+.mpd_icon {
+	margin-right: 15px;
+	margin-left: 15px;
+	font-size: larger;
+}
+.mpd_wrap scale {
+	background: $color2;
+	min-width: 160px;
+	min-height: 8px;
+	margin-left: 10px;
+	border-radius: 4px;
+}
+.mpd_wrap trough {
+	min-height: 8px;
+	border-radius: 4px;
+}
+.mpd_wrap scale trough highlight {
+	min-height: 8px;
+	background: $term_color10;
+	border-radius: 4px;
+}
+.shadow {
+	min-width: 20px;
+	background: linear-gradient(
+		to right,
+		hsla(0, 0%, 1%, 0.5) 0%,
+		hsla(0, 0%, 1%, 0.494) 0%,
+		hsla(0, 0%, 1%, 0.476) 0.2%,
+		hsla(0, 0%, 1%, 0.448) 0.8%,
+		hsla(0, 0%, 1%, 0.412) 1.9%,
+		hsla(0, 0%, 1%, 0.37) 3.7%,
+		hsla(0, 0%, 1%, 0.324) 6.4%,
+		hsla(0, 0%, 1%, 0.275) 10.2%,
+		hsla(0, 0%, 1%, 0.225) 15.2%,
+		hsla(0, 0%, 1%, 0.176) 21.6%,
+		hsla(0, 0%, 1%, 0.13) 29.6%,
+		hsla(0, 0%, 1%, 0.088) 39.4%,
+		hsla(0, 0%, 1%, 0.052) 51.2%,
+		hsla(0, 0%, 1%, 0.024) 65.1%,
+		hsla(0, 0%, 1%, 0.006) 81.3%,
+		hsla(0, 0%, 1%, 0) 100%
+	);
+}
+.sway {
+	min-width: 230px;
+	margin-left: 10px;
+	margin-right: 10px;
+	border-radius: 2em;
+	padding: 15px;
+	background: $color2;
+	margin-top: 10px;
+}
+.line {
+	min-height: 1px;
+	min-width: 230px;
+	margin-left: 10px;
+	margin-right: 10px;
+	background: $color2;
+	margin-top: 10px;
+}
+.date {
+	margin-top: 10px;
+	font-size: smaller;
+}
+.date_smaller {
+	font-size: 0.8em;
+}
+.bat {
+	margin-top: 10px;
+	margin-left:  30px;
+	margin-right: 30px;
+}
+.bat_top {
+	border: 1px solid $color_bat;
+	min-width: 20px;
+	min-height: 5px;
+	border-radius: 5px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom: none;
+	background: $color_bat;
+}
+.bat_body {
+	background: none;
+	border: 2px solid $color_bat;
+	min-width: 80px;
+	min-height: 160px;
+	border-radius: 10px;
+}
+.bat_prog {
+	//$bgs: 9%;
+	//$bgs2: 12%;
+	//background: $term_color2
+	//	 repeating-linear-gradient(0deg, transparent 0, transparent $bgs, $color0 $bgs, $color0 $bgs2);
+	//background: linear-gradient(#C77DFF, #3C096C);
+	background: $term_color10;
+	min-width: 68px;
+	border-radius: 5px;
+	margin: 6px;
+}
+.bat_info {
+	font-size: 2.5em;
+}
+.workspace {
+	min-width:  10px;
+	min-height: 10px;
+	border-radius: 100%;
+	border: $color1 solid 1px;
+}
+.workspace:not(:first-child) {
+	margin-left: 1.3em;
+}
+.workspace-focused {
+	background: $color1;
+}
+.workspace-unused {
+	border-color: $color3;
+}
+.bar {
+	background-color: $color0;
+	color: $color1;
+	font-size: 1.3em;
+	min-width: 300px;
+	font-family: "JetBrains Mono";
+}
+.time {
+	font-size: 4.5em;
+	font-stretch: normal;
+}
