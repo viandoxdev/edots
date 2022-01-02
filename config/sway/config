@@ -86,6 +86,8 @@ bindsym $mod+F1 exec ~/dots/config/sway/screenshot.sh
 # toggle sidebar
 bindsym $mod+F2 exec ~/dots/config/eww/scripts/sidebar/toggle.sh
 bindsym $mod+F3 exec mpc toggle
+bindsym $mod+Alt+Down exec amixer sset Master 2%-
+bindsym $mod+Alt+Up exec amixer sset Master 2%+
 
 default_border none
 title_align center

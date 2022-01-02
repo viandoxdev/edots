@@ -20,7 +20,7 @@
 
 ; PIPEWIRE
 (defpoll sound
-  :interval "2s"
+  :interval "1s"
   :initial "100"
   `amixer sget Master | awk '/Left: Playback/ {print substr($5,2,3)+0}'`)
 
@@ -137,6 +137,7 @@
               (box :space-evenly false
                 :class "prog_inst"
                 (circular-progress :value "${EWW_CPU.avg}"
+                  :tooltip "test"
                   :thickness "10"
                   :class "prog_cpu"
                   :valign "start"
