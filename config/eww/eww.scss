@@ -59,9 +59,6 @@ window {
 .prog_label {
 	margin-left: 10px;
 }
-.space {
-	margin-top: 20px;
-}
 .bar_parent {
 	background: none;
 }
@@ -155,8 +152,11 @@ window {
 	margin-right: 10px;
 	border-radius: 2em;
 	padding: 15px;
-	background: $color2;
+	background: $color0;
 	margin-top: 10px;
+}
+.sysinfo, .icon {
+	margin-right: 10px;
 }
 .line {
 	min-height: 1px;
@@ -230,8 +230,23 @@ window {
 	font-size: 1.3em;
 	min-width: 300px;
 	font-family: "JetBrains Mono";
+	min-height: 720px;
 }
 .time {
 	font-size: 4.5em;
 	font-stretch: normal;
+}
+.test0 {
+	background: red;
+}
+.test1 {
+	min-width: 20px;
+	min-height: 20px;
+	border: 3px solid black;
+}
+.test2 {
+	background: blue;
+}
+.footer {
+	background: $color2;
 }

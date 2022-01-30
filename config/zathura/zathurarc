@@ -1,0 +1,9 @@
+set font "JetBrains Mono"
+set default-bg "#090909"
+set default-fg "#ffffff"
+
+"set recolor "true"
+set recolor-lightcolor "#090909" #00
+set recolor-darkcolor "#FFFFFF" #06
+set recolor-reverse-video "true"
+set recolor-keephue "true"

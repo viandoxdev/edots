@@ -15,7 +15,7 @@ output * bg ~/dots/bg.png fill
 ### Key bindings
 # Basics:
     # Start a terminal
-    bindsym $mod+Return exec $term 2> ~/kitty_log
+    bindsym $mod+Return exec $term
     # Kill focused window
     bindsym $mod+w kill
     # Start your launcher
@@ -32,11 +32,6 @@ output * bg ~/dots/bg.png fill
     #bindsym $mod+Shift+Escape exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
     bindsym $mod+Shift+Space exec swaymsg exit
 # Moving around:
-    # Move your focus around
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
     # Or use $mod+[up|down|left|right]
     bindsym $mod+Left focus left
     bindsym $mod+Down focus down
@@ -88,6 +83,8 @@ bindsym $mod+F2 exec ~/dots/config/eww/scripts/sidebar/toggle.sh
 bindsym $mod+F3 exec mpc toggle
 bindsym $mod+Alt+Down exec amixer sset Master 2%-
 bindsym $mod+Alt+Up exec amixer sset Master 2%+
+bindsym $mod+g exec ~/dots/config/sway/gaps.sh
+bindsym $mod+l exec swaylock -c '#000000'
 
 default_border none
 title_align center
