@@ -3,6 +3,7 @@ $color0: #090909;
 $color1: #FFFFFF;
 $color2: #141414;
 $color3: #BBBBBB;
+$color4: #777777;
 
 // terminal colors, from ../kitty/kitty.conf
 $term_color0: #101415; // black
@@ -249,4 +250,37 @@ window {
 }
 .footer {
 	background: $color2;
+}
+.gh_avatar {
+	min-width: 4em;
+	min-height: 4em;
+	background-size: 100% 100%;
+	border-radius: 100%;
+}
+.gh_header {
+	padding-bottom: 1em;
+	border-bottom: 1px solid $color2;
+}
+.gh_name {
+	min-height: 4em;
+}
+.gh_page {
+	padding:1em;
+}
+.gh_reload_avatar_wrap {
+	min-height: 4em;
+}
+.gh_reload_avatar_wrap > button {
+	padding: 15px 25px 15px 25px;
+	border-radius: 6px;
+	border: 1px solid $color2;
+	transition: 0.1s all ease-in-out;
+}
+.gh_reload_avatar_wrap > button:hover {
+	background-color: $color2;
+	padding: 15px 25px 15px 25px;
+	border-radius: 6px;
+}
+.text_secondary {
+	color: $color4;
 }

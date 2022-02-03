@@ -58,6 +58,8 @@
   :interval "500ms"
   :initial "0"
   `mpc status %percenttime% | awk '{print $0+0}'`)
+
+; unused as of now, maybe later
 (defpoll kernel
   :interval "3600s"
   :initial ""
@@ -67,6 +69,17 @@
   :initial ""
   `uptime -p | cut -d' ' -f2-`)
 
+; GITHUB
+(defpoll gh-user-info
+  :interval "3600s"
+  :initial '{"name":"","login":"","email":""}'
+  ; name: displayed name, login: actual name, email is optional
+  `~/dots/config/eww/sh/github.sh user_info`)
+(defpoll gh-avatar ; the path to the avatar image
+  :interval "3s" ; the script will just return the path to the image
+  :initial ''    ; most of the time so this is nothing too expensive
+  `~/dots/config/eww/sh/github.sh avatar`)
+
 ; SWAY
 (deflisten sway-workspaces
   :initial '[{"focused":false,"used":false},{"focused":false,"used":false},{"focused":false,"used":false},{"focused":false,"used":false},{"focused":false,"used":false},{"focused":false,"used":false},{"focused":false,"used":false},{"focused":false,"used":false}]'
@@ -74,9 +87,24 @@
   `while true; do swaymsg -t subscribe '["workspace"]' >/dev/null && swaymsg -t get_workspaces -r | jq '[.[] | {name: .name | tonumber, focused, used: true}] + [range(1;9) | {name:., focused: false, used: false}   ] | unique_by(.name) | sort_by(.name) | [.[] | {focused, used}]' -cM; done`)
 
 (defvar sidebar-revealed "false")
-(defvar mpd-hover-seek "false")
-(defvar sidebar-page 0)
+; used to make the mpd seek bar (that shows how far into the song were
+; currently) only interactive when the mouse is over. This is done to
+; avoid audio glitchs because the bar makes a loop:
+;  - mpd plays the song, and gets further into it
+;  - this is noticed by the mpd-through var
+;  - the var then updates the value of the bar
+;  - the bar sees its value updated and calls its onchange "callback"
+;  - and the "callback" tells mpd to go this far into the song.
+; Problem is that this is done with a delay, caused by the poll interval
+; and how many things it needs to go through, so the song ends up going
+; ~100ms back every 1-2s, which is very annoying.
+(defvar mpd-hover-seek "false") 
+; TODO: set that back to 0 when page 2 is done
+(defvar sidebar-page 1)
+; remember to update that
 (defvar sidebar-page-max 3)
+; wether the reload button should be displayed
+(defvar gh-reload-avatar false)
 
 (defwindow sidebar
            :monitor 0
@@ -264,7 +292,38 @@
                 ;    (label :text {uptime})))
                 ))
             (bpage :index 1
-              "test1")
+              (box :orientation "v"
+                :space-evenly false
+                :class "gh_page"
+                (box :space-evenly false
+                  :class "gh_header"
+                  (button :onclick "eww update gh-reload-avatar=${!gh-reload-avatar}"
+                    (box :style "background-image: url('${gh-avatar}')"
+                      :class "gh_avatar"))
+                  (box :orientation "v"
+                    :space-evenly false
+                    :hexpand true
+                    (revealer :reveal {! gh-reload-avatar}
+                      :transition "slidedown"
+                      :duration "250ms"
+                      (box 
+                        :orientation "v"
+                        :halign "center"
+                        :class "gh_name"
+                        (label :text {gh-user-info.name})
+                        (label :text {gh-user-info.login}
+                          :class "text_secondary")))
+                    (revealer :reveal {gh-reload-avatar}
+                      :transition "slidedown"
+                      :duration "250ms"
+                      :hexpand true
+                      (box :class "gh_reload_avatar_wrap"
+                        :space-evenly false
+                        :halign "center"
+                        (button :onclick `rm ${gh-avatar}; eww update gh-avatar=''; eww update gh-avatar=$(~/dots/config/eww/sh/github.sh avatar)`
+                          :valign "center"
+                          "󰑓 Avatar"))))))
+            )
             (bpage :index 2
               "test2")                                          
             (bpage :index 3
