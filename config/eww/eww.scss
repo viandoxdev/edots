@@ -156,7 +156,10 @@ window {
 	background: $color0;
 	margin-top: 10px;
 }
-.sysinfo, .icon {
+.sysinfo {
+	margin-right: 10px;
+}
+.mpd_wrap .icon {
 	margin-right: 10px;
 }
 .line {
@@ -259,13 +262,13 @@ window {
 }
 .gh_header {
 	padding-bottom: 1em;
+	margin:1em;
 	border-bottom: 1px solid $color2;
 }
 .gh_name {
 	min-height: 4em;
 }
 .gh_page {
-	padding:1em;
 }
 .gh_reload_avatar_wrap {
 	min-height: 4em;
@@ -283,4 +286,45 @@ window {
 }
 .text_secondary {
 	color: $color4;
+}
+.gh_week {
+	padding: 1em;
+	padding-top: 0;
+}
+.contrib_day {
+	transition: all 0.1s;
+	min-width: 2.0em;
+	min-height: .4em;
+}
+.contrib_day:first-child,
+.contrib_day.focused:first-child,
+.contrib_day:hover:first-child {
+	border-top-left-radius: .4em;
+	border-bottom-left-radius: .4em;
+}
+.contrib_day:last-child,
+.contrib_day.focused:last-child,
+.contrib_day:hover:last-child {
+	border-top-right-radius: .4em;
+	border-bottom-right-radius: .4em;
+}
+.contrib_day:hover, .contrib_day.focused  {
+	min-height: .6em;
+	border-radius: 0.1em;
+}
+
+.contrib_day_0 {
+	background: $color2;
+}
+.contrib_day_1 {
+	background: #0e4429;
+}
+.contrib_day_2 {
+	background: #006d32;
+}
+.contrib_day_3 {
+	background: #39d353;
+}
+.contrib_day_4 {
+	background: #39d353;
 }

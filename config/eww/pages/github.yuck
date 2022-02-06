@@ -1,0 +1,114 @@
+(defpoll gh-user-info
+  :interval "3600s"
+  :initial '{"name":"","login":"","email":""}'
+  ; name: displayed name, login: actual name, email is optional
+  `~/dots/config/eww/sh/github.sh user_info`)
+(defpoll gh-avatar ; the path to the avatar image
+  :interval "3s" ; the script will just return the path to the image
+  :initial ''    ; most of the time so this is nothing too expensive
+  `~/dots/config/eww/sh/github.sh avatar`)
+(defpoll gh-ctrb
+  :interval "3600s"
+  :initial "[]"
+  `~/dots/config/eww/sh/github.sh contrib`)
+
+; wether the reload button should be displayed
+(defvar gh-reload-avatar false)
+; [keepalive] only here to tell how long the transition should take to scripts
+; HAS to be in miliseconds without a suffix
+(defvar GH_CTRB_TRANSITION_DURATION "250")
+(defvar gh-ctrb-transition-duration "250ms") ; should match above 
+(defvar gh-ctrb-transition "slideleft")
+(defvar gh-ctrb-reveal "center")
+(defvar gh-ctrb-week 0)
+(defvar gh-ctrb-week-left 1)
+(defvar gh-ctrb-week-right 1)
+(defvar gh-ctrb-day-current 0)
+
+(defwidget github-page [index]
+  (bpage :index index
+    (box :orientation "v"
+      :hexpand true
+      :space-evenly false
+      :class "gh_page"
+      (box :space-evenly false
+        :class "gh_header"
+        (button :onclick "eww update gh-reload-avatar=${!gh-reload-avatar}"
+          (box :style "background-image: url('${gh-avatar}')"
+            :class "gh_avatar"))
+        (box :orientation "v"
+          :space-evenly false
+          :hexpand true
+          (revealer :reveal {! gh-reload-avatar}
+            :transition "slidedown"
+            :duration "250ms"
+            (box 
+              :orientation "v"
+              :halign "center"
+              :class "gh_name"
+              (label :text {gh-user-info.name})
+              (label :text {gh-user-info.login}
+                :class "text_secondary")))
+          (revealer :reveal {gh-reload-avatar}
+            :transition "slidedown"
+            :duration "250ms"
+            :hexpand true
+            (box :class "gh_reload_avatar_wrap"
+              :space-evenly false
+              :halign "center"
+              (button :onclick `rm ${gh-avatar}; eww update gh-avatar=''; eww update gh-avatar=$(~/dots/config/eww/sh/github.sh avatar)`
+                :valign "center"
+                "󰑓 Avatar")))))
+      (box :space-evenly false
+        :hexpand true
+        (revealer :duration gh-ctrb-transition-duration
+          :transition "slideright"
+          :reveal {gh-ctrb-reveal == "left"}
+          (contrib-week :week gh-ctrb-week-left))
+        (revealer :duration gh-ctrb-transition-duration
+          :transition {gh-ctrb-transition}
+          :reveal {gh-ctrb-reveal == "center"}
+          (contrib-week :week gh-ctrb-week))
+        (revealer :duration gh-ctrb-transition-duration
+          :transition "slideleft"
+          :reveal {gh-ctrb-reveal == "right"}
+          (contrib-week :week gh-ctrb-week-right)))
+      )))
+
+(defwidget contrib-week [week]
+  (box :orientation "v"
+    :space-evenly false
+    :class "gh_week"
+    (centerbox :orientation "h"
+      (button :onclick `~/dots/config/eww/sh/ctrb.sh previous`
+        :halign "start"
+        (icon :icon "󰅁"
+          :secondary {week > gh-ctrb.length - 2}))
+      (label :text "${week == 0 ? "this week" : week == 1 ? "last week" : "${week} weeks ago"}"
+        :halign "center")
+      (button :onclick `~/dots/config/eww/sh/ctrb.sh next`
+        :halign "end"
+        (icon :icon "󰅂"
+          :secondary {week == 0})))
+    (space-small)
+    (box :space-evenly false
+      (contrib-day :contrib {gh-ctrb.data[week][0].contributionCount} :index 0)
+      (contrib-day :contrib {gh-ctrb.data[week][1].contributionCount} :index 1)
+      (contrib-day :contrib {gh-ctrb.data[week][2].contributionCount} :index 2)
+      (contrib-day :contrib {gh-ctrb.data[week][3].contributionCount} :index 3)
+      (contrib-day :contrib {gh-ctrb.data[week][4].contributionCount} :index 4)
+      (contrib-day :contrib {gh-ctrb.data[week][5].contributionCount} :index 5)
+      (contrib-day :contrib {gh-ctrb.data[week][6].contributionCount} :index 6))
+  ))
+(defwidget contrib-day [index contrib]
+  ; I didn't think I'd ever get to performance intensive yuck but here it is.
+  (button :space-evenly false
+    :onclick "eww update gh-ctrb-day-current=${index}"
+    :active true
+    :valign "center"
+    :class "contrib_day ${gh-ctrb-day-current == index ? "focused" : ""} ${
+      contrib == 0 ? "contrib_day_0" :
+      contrib == 1 || contrib == 2 ? "contrib_day_1" :
+      contrib == 3 || contrib == 4 ? "contrib_day_2" :
+      contrib == 5 || contrib == 6 ? "contrib_day_3" : "contrib_day_4"}"
+    ))

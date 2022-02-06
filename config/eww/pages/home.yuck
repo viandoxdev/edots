@@ -1,0 +1,248 @@
+
+; TIME
+(defpoll time
+  :interval "1s"
+  `date +%H:%M`)
+(defpoll date
+  :interval "10s"
+  :initial '{"value": "...", "length": 0}'
+  `~/dots/config/eww/sh/date.sh`)
+
+; DISK (BTRFS)
+(defpoll fsused
+  :interval "1s"
+  :initial "0"
+  `btrfs filesystem usage / | awk '/^\\s*Used/ {print $2+0}'`)
+(defpoll fscap
+  :interval "5s"
+  :initial "100"
+  `btrfs filesystem usage / | awk '/size/ {print $3+0}'`)
+
+; PIPEWIRE
+(defpoll sound
+  :interval "1s"
+  :initial "100"
+  `amixer sget Master | awk '/Left: Playback/ {print substr($5,2,3)+0}'`)
+
+; BRIGHTNESS
+(defpoll brightness
+  :interval "1s"
+  :initial "100"
+  ; love it when the tool does just what you want without needed to pipe awk and sed.
+  `light -G`)
+
+; MPD STUFF
+(deflisten mpd-track
+  :initial "..."
+  `mpc idleloop player  | while read _; do mpc current -f '[[[%artist%]|[%album%]] - %title%]|%file%';          done`)
+(deflisten mpd-track-short
+  :initial "..."
+  `mpc idleloop player  | while read _; do mpc current -f '[%title%]|%file%';                                   done`)
+(deflisten mpd-volume
+  :initial "50"
+  `mpc idleloop mixer   | while read _; do mpc status %volume% | awk '{print $0+0}';                            done`)
+(deflisten mpd-repeat
+  :initial "false"
+  `mpc idleloop options | while read _; do mpc status %repeat% | awk '{print $0=="on" ? "true" : "false"}';        done`)
+(deflisten mpd-random
+  :initial "false"
+  `mpc idleloop options | while read _; do mpc status %random% | awk '{print $0=="on" ? "true" : "false"}';        done`)
+(deflisten mpd-single
+  :initial "false"
+  `mpc idleloop options | while read _; do mpc status %single% | awk '{print $0=="on" ? "true" : "false"}';        done`)
+(deflisten mpd-playing
+  :initial "false"
+  `mpc idleloop player | while read _; do mpc status %state% | awk '{print $0=="playing" ? "true" : "false"}';        done`)
+; has to be poll obviously
+(defpoll mpd-trough
+  :interval "500ms"
+  :initial "0"
+  `mpc status %percenttime% | awk '{print $0+0}'`)
+
+; unused as of now, maybe later
+(defpoll kernel
+  :interval "3600s"
+  :initial ""
+  `uname -r | awk -F'-' '{print $1}'`)
+(defpoll uptime
+  :interval "60s"
+  :initial ""
+  `uptime -p | cut -d' ' -f2-`)
+
+; used to make the mpd seek bar (that shows how far into the song were
+; currently) only interactive when the mouse is over. This is done to
+; avoid audio glitchs because the bar makes a loop:
+;  - mpd plays the song, and gets further into it
+;  - this is noticed by the mpd-through var
+;  - the var then updates the value of the bar
+;  - the bar sees its value updated and calls its onchange "callback"
+;  - and the "callback" tells mpd to go this far into the song.
+; Problem is that this is done with a delay, caused by the poll interval
+; and how many things it needs to go through, so the song ends up going
+; ~100ms back every 1-2s, which is very annoying.
+(defvar mpd-hover-seek "false") 
+
+(defwidget home-page [index]
+  (bpage :index index
+    ; DATE
+    (box :class "date ${date.length > 27 ? "date_smaller" : ""}"
+      "${date.value}")
+
+    (box :class "line")
+
+    ; TIME
+    (box :class "time"
+      "${time}")
+
+    (box :class "line")
+    (space)
+
+    ; SYSTEM INFO
+    (box :space-evenly false
+      (box :class "bat"
+        :space-evenly "false"
+        :orientation "v"
+        (box :class "bat_top"
+          :halign "center")
+        (box :class "bat_body"
+          :halign "center"
+            (box :class "bat_prog"
+              :valign "end"
+              :style "min-height: ${148 * (EWW_BATTERY.BAT0.capacity / 100)}px;"
+              (box :class "bat_info"
+                :orientation "v"
+                :valign "center"
+                :halign "center"
+                (icon :icon "${EWW_BATTERY.BAT0.status == "Charging" ? "󱐋" : ""}"))))
+          (box :class "bat_cap"
+            "${EWW_BATTERY.BAT0.capacity}%"))
+      (box :orientation "v"
+        :halign "start"
+        :class "prog_wrap"
+        :space-evenly false
+        (box :space-evenly false
+          :class "prog_inst"
+          (circular-progress :value "${EWW_RAM.used_mem_perc}"
+            :thickness "10"
+            :class "prog_ram"
+            :halign "start"
+            :start-at "0"
+              (box :class "prog"
+                "${round(EWW_RAM.used_mem_perc, 0)}%"))
+          (box :class "prog_label" 
+            "ram"))
+        (box :space-evenly false
+          :class "prog_inst"
+          (circular-progress :value "${EWW_CPU.avg}"
+            :tooltip "test"
+            :thickness "10"
+            :class "prog_cpu"
+            :valign "start"
+            :start-at "0"
+              (box :class "prog"
+                "${round(EWW_CPU.avg, 0)}%"))
+            (box :class "prog_label" 
+              "cpu"))
+        (box :space-evenly false
+          :class "prog_inst"
+          (circular-progress :value "${fsused / fscap * 100}"
+            :thickness "10"
+            :class "prog_disk"
+            :valign "start"
+            :start-at "0"
+              (box :class "prog"
+                "${round(fsused / fscap * 100, 0)}%"))
+            (box :class "prog_label" 
+              "disk"))))
+
+    ; SCALES
+    (box :orientation "v"
+      :class "scales"
+      :space-evenly false
+      (box :space-evenly false
+        (scale :value "${sound}"
+          :halign "start"
+          :valign "center"
+          :class "scale s_sound"
+          :min "0"
+          :max "100"
+          :onchange "amixer sset Master {}%"
+          :orientation "h")
+        (box :class "scale_label"
+          "󰋋"))
+      (box :space-evenly false
+        (scale :value "${brightness}"
+          :halign "start"
+          :valign "center"
+          :class "scale s_brightness"
+          :min "0"
+          :max "100"
+          :onchange "light -S {}"
+          :orientation "h")
+        (box :class "scale_label"
+          "󰃞"))
+      )
+    (space)
+    (box :space-evenly false
+      :class "mpd_wrap"
+      :orientation "v"
+      (box
+      :space-evenly false
+        (centerbox :orientation "h"
+          :hexpand true
+          :class "mpd_track_wrap"
+          (button :halign "start"
+            :class "mpd_button"
+            :onclick "mpc prev"
+            "󰅁")
+            (label :halign "center"
+              :limit-width 21
+              ; regex goes brbrbrbrrbrbrbr
+
+              ; this line first compute the displayed title (see :text) and then uses a regex to:
+              ; if it is more than 20 chrs long, replace it with //__LONG__//,
+              ; if it isn't keep it as is. Then the result is matched to see if it is //__LONG__//,
+              ; and if it is the mpd_track_long class is added
+
+              ; TLDR; add the mpd_track_long class if the label is 20 chrs or more
+              :class "mpd_track ${replace("${replace("${mpd-track}", "^.{20,}$", "${mpd-track-short}")}", "^.{20,}$", "//__LONG__//") == "//__LONG__//" ? "mpd_track_long" : ""}"
+              ; this replaces mpd-track with mpd-track-short if mpd track is longer than 20 chrs.
+              :text "${replace("${mpd-track}", "^.{20,}$", "${mpd-track-short}")}")
+          (button :halign "end"
+            :class "mpd_button"
+            :onclick "mpc next"
+            "󰅂"))
+        (box :class "mpd_icon"
+          "󰎈"))
+      (space-small)
+      (box :space-evenly false
+          (button :onclick "mpc toggle"
+            (icon :icon "${mpd-playing ? "󰏤" : "󰐊"}"))
+          (button :onclick "mpc random"
+            (icon :icon "${mpd-random ? "󰒝" : "󰒞"}"))
+          (button :onclick "${mpd-repeat ? mpd-single ? "mpc single && mpc repeat" : "mpc single" : "mpc repeat"}"
+            (icon :icon "${mpd-repeat ? mpd-single ? "󰑘" : "󰑖" : "󰑗"}"))
+          (eventbox :onhover "eww update mpd-hover-seek=true"
+            :onhoverlost "eww update mpd-hover-seek=false"
+            (scale :value "${mpd-trough}"
+              :halign "start"
+              :valign "center"
+              :onchange "${mpd-hover-seek ? "mpc seek {}%" : ""}"
+              :min "0"
+              :max "100"
+              :orientation "h")))
+      ;(space-long)
+      ;(box :class "sysinfo"
+      ;  :space-evenly "false"
+      ;  (box :space-evenly false
+      ;    (icon :halign "start"
+      ;      :icon "󰌽"))
+      ;    (label :text {kernel})
+      ;  " "
+      ;  (box :space-evenly false
+      ;    :class "sysinfo_2"
+      ;    (icon :halign "start"
+      ;      :icon "󱑆")
+      ;    (label :text {uptime})))
+      )))
+

@@ -4,9 +4,10 @@ user="$(~/dots/inf.sh github_graphql_user)"
 token="$(~/dots/inf.sh github_graphql_token)"
 
 req() {
-	curl -s -u "$user":"$token" -X POST \
-		-H "Content-Type: application/json" \
-		-d '{"query": "'"$(xargs < <(cat -))"'"}' \
+	cat - | jq -s -R '{query: .}' |			\
+		curl -s -u "$user":"$token" -X POST	\
+		-H "Content-Type: application/json"	\
+		-d @- 					\
 		https://api.github.com/graphql
 }
 
@@ -26,6 +27,26 @@ run() {
 			fi
 			echo "$HOME/dots/github_pfp.png"
 			;;
+		"contrib")
+			{ req <<- END
+				query {
+				  viewer {
+				    contributionsCollection(to: "$(date -u -dsaturday -Is)") {
+				      contributionCalendar {
+				        weeks {
+				          contributionDays {
+				            contributionCount
+				            date
+				            weekday
+				          }
+				        }
+				      }
+				    }
+				  }
+				}
+				END
+			} | jq -c '(.data.viewer.contributionsCollection.contributionCalendar.weeks | .[] |= .contributionDays) | {length: length, data: . | reverse}'
+			;;
 		"user_info")
 			{ req <<- END
 				query {
@@ -39,17 +60,17 @@ run() {
 			} | jq '.data.viewer'
 			;;
 		"rate")
-				 { req <<- END
-				 	query {
-		 				rateLimit {
-						  limit
-						  remaining
-						  resetAt
-						}
-		 			}
-					END
-				 } | jq '.data.rateLimit'
-				 ;;
+			 { req <<- END
+				query {
+					rateLimit {
+					  limit
+					  remaining
+					  resetAt
+					}
+				}
+				END
+			 } | jq '.data.rateLimit'
+			 ;;
 		*)
 			;;
 	esac
