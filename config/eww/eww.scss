@@ -1,8 +1,8 @@
-$color0: #090909;
-$color1: #FFFFFF;
-$color2: #141414;
-$color3: #BBBBBB;
-$color4: #777777;
+$color0: rgba(  9,  9,  9,0.0);
+$color1: rgba(255,255,255,1.0);
+$color2: rgba( 20, 20, 20,0.5);
+$color3: rgba(187,187,187,0.5);
+$color4: rgba(119,119,119,0.5);
 
 // terminal colors, from ../kitty/kitty.conf
 $term_color0: #101415; // black
@@ -229,8 +229,12 @@ window {
 .workspace-unused {
 	border-color: $color3;
 }
+.bar_reveal {
+	background:url("/home/vndx/dots/bg.png");
+	background-size: cover; 
+}
 .bar {
-	background-color: $color0;
+	background: $color0;
 	color: $color1;
 	font-size: 1.3em;
 	min-width: 300px;

@@ -31,49 +31,48 @@
       (revealer :reveal sidebar-revealed
         :transition "slideright"
         :duration "250ms"
-        (box :class "bar"
-          :orientation "v"
-          :space-evenly "false"
-
-
-          (box :orientation "v" ; main box
-            :valign "start"
-            :vexpand "true"
+        (box :class "bar_reveal"
+          (box :class "bar"
+            :orientation "v"
             :space-evenly "false"
-            ; PAGES
 
-            (home-page :index "0")
-            (github-page :index "1")
-          )
+            (box :orientation "v" ; main box
+              :valign "start"
+              :vexpand "true"
+              :space-evenly "false"
+              ; PAGES
 
-            
-          (box :orientation "v" ; footer
-            :class "footer"
-            :valign "end"
-            :space-evenly "false"
-            (space)
-            (box :class "pages"
-              (button :onclick `~/dots/config/eww/sh/page.sh first`
-                (icon :icon "󰄽"))
-              (button :onclick `~/dots/config/eww/sh/page.sh previous`
-                (icon :icon "󰅁"))
-              (label :text "${sidebar-page}")
-              (button :onclick `~/dots/config/eww/sh/page.sh next`
-                (icon :icon "󰅂"))
-              (button :onclick `~/dots/config/eww/sh/page.sh last`
-                (icon :icon "󰄾")))
-            (box :class "sway"
-              :space-evenly false
-              (workspace :index "0")
-              (workspace :index "1")
-              (workspace :index "2")
-              (workspace :index "3")
-              (workspace :index "4")
-              (workspace :index "5")
-              (workspace :index "6")
-              (workspace :index "7"))
-            (space)
-              ))))
+              (home-page :index "0")
+              (github-page :index "1"))
+
+              
+            (box :orientation "v" ; footer
+              :class "footer"
+              :valign "end"
+              :space-evenly "false"
+              (space)
+              (box :class "pages"
+                (button :onclick `~/dots/config/eww/sh/page.sh first`
+                  (icon :icon "󰄽"))
+                (button :onclick `~/dots/config/eww/sh/page.sh previous`
+                  (icon :icon "󰅁"))
+                (label :text "${sidebar-page}")
+                (button :onclick `~/dots/config/eww/sh/page.sh next`
+                  (icon :icon "󰅂"))
+                (button :onclick `~/dots/config/eww/sh/page.sh last`
+                  (icon :icon "󰄾")))
+              (box :class "sway"
+                :space-evenly false
+                (workspace :index "0")
+                (workspace :index "1")
+                (workspace :index "2")
+                (workspace :index "3")
+                (workspace :index "4")
+                (workspace :index "5")
+                (workspace :index "6")
+                (workspace :index "7"))
+              (space)
+                )))))
     (box :class "shadow")))
 
 (defwidget space-small []
