@@ -85,8 +85,8 @@ req-page() {
 
 case "$1" in
 	"avatar")
-		mkdir -p ~/dots/cache/github
-		if ! [ -f ~/dots/cache/github/avatar.png ]; then
+		mkdir -p ~/.cache/dots/github
+		if ! [ -f ~/.cache/dots/github/avatar.png ]; then
 			curl -s "$({ req <<- END
 				query {
 				  viewer {
@@ -94,9 +94,9 @@ case "$1" in
 				  }
 				}
 				END
-			} | jq '.data.viewer.avatarUrl' -r)" -o ~/dots/cache/github/avatar.png
+			} | jq '.data.viewer.avatarUrl' -r)" -o ~/.cache/dots/github/avatar.png
 		fi
-		echo "$HOME/dots/cache/github/avatar.png"
+		echo "$HOME/.cache/dots/github/avatar.png"
 		;;
 	"contrib")
 		{ req <<- END

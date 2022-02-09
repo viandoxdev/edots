@@ -5,7 +5,9 @@ log() {
 }
 
 ghsh="$HOME/dots/config/eww/sh/github.sh"
-user_year="$(date -d"$($ghsh user_info | jq -r '.createdAt')" +%Y)"
+user_date="$($ghsh user_info | jq -r '.createdAt')"
+user_year="$(date -d"$user_date" +%Y)"
+mkdir -p "$HOME/.cache/dots/github/months"
 
 query_year() {
 
@@ -19,7 +21,6 @@ query_year() {
 
 	NAMES=("commits" "issues" "pull_requests" "pull_requests_reviews" "repositories")
 
-	mkdir -p "$HOME/dots/cache/github/months"
 	mkdir -p "$dir/months"
 	
 	for i in "${!NAMES[@]}"; do
@@ -72,8 +73,10 @@ query_year() {
 		done
 	done
 	
-
-	# merge commits/XXXXXX.json issues/XXXXXX.json ... in .../cache/.../XXXXXX.json
+	# dir with resulting files
+	res="$(mktemp -d)"
+	
+	# merge commits/XXXXXX.json issues/XXXXXX.json ... in res/XXXXXX.json
 	for i in {01..12}; do
 		month="${1}${i}"
 		inputs=()
@@ -81,31 +84,43 @@ query_year() {
 			inputs+=("$dir/$n/$month.json")
 		done
 
-		jq -nc '[inputs] | flatten | sort_by(.date | fromdateiso8601)' "${inputs[@]}" > "$HOME/dots/cache/github/months/$month.json"
+		jq -nc '[inputs] | flatten | sort_by(.date | fromdateiso8601)' "${inputs[@]}" > "$res/$month.json"
 	done
 
 	rm -r "$dir"
+
+	# return results dir
+	echo "$res"
 }
 
 current_year="$(date -u +%Y)"
-current_month="${current_year}$(date -u +%m)" # YYYYMM
+current_month="$(date -u +%Y%m)" # YYYYMM
+user_month="$(date -u -d"$user_date" +%Y%m)"
 year="$((user_year - 1))" # year will be incremented right after
 
 while ! [ "$year" = "$current_year" ]; do
+	log ''
 	year=$((year + 1))
-	query_year "$year"
+	res="$(query_year "$year")"
+
+	log 'cleaning up'
+	log ''
+
+	# save the months we want to cache, ignoring the months before the account's
+	# creation as well as the one after or equal to the current one.
+	for file in "$res/"* ; do
+		fmonth="$(cut -d "." -f1 <<< "$(basename "$file")")" # YYYYMM of file
+
+		# this works because in YYYYMM if DATE1 > DATE2 (numerically),
+		# then DATE1 is after DATE2 (time wise)
+		if [ "$fmonth" -ge "$user_month" ] && [ "$fmonth" -lt "$current_month" ]; then
+			mv "$file" "$HOME/.cache/dots/github/months/"
+		else
+			log "ignoring $fmonth"
+		fi
+	done
+
+	# res is in temp, so we delete it once were done saving what we want
+	rm -r "$res"
 done
 
-log 'cleaning up'
-log ''
-
-# delete any future months as well as the current_month, because those are subject to change.
-for file in "$HOME/dots/cache/github/months/"* ; do
-	fmonth="$(cut -d "." -f1 <<< "$(basename "$file")")" # YYYYMM
-	# this works because in YYYYMM if DATE1 > DATE2 (numerically),
-	# then DATE1 is after DATE2 (time wise)
-	if [ "$fmonth" -ge "$current_month" ]; then
-		log "deleting $fmonth.json"
-		rm "$file"
-	fi
-done
