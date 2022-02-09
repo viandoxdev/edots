@@ -99,10 +99,11 @@
 
     ; SYSTEM INFO
     (box :space-evenly false
-      (box :class "bat"
+      ; BATTERY
+      (box :class "bat" ; Battery icon
         :space-evenly "false"
         :orientation "v"
-        (box :class "bat_top"
+        (box :class "bat_top" ; top notch
           :halign "center")
         (box :class "bat_body"
           :halign "center"
@@ -114,12 +115,15 @@
                 :valign "center"
                 :halign "center"
                 (icon :icon "${EWW_BATTERY.BAT0.status == "Charging" ? "󱐋" : ""}"))))
-          (box :class "bat_cap"
+          (box :class "bat_cap" ; Battery percentage
             "${EWW_BATTERY.BAT0.capacity}%"))
+      ; USAGES
       (box :orientation "v"
         :halign "start"
         :class "prog_wrap"
         :space-evenly false
+        ; RAM
+        ; TODO: use widget to avoid repeating
         (box :space-evenly false
           :class "prog_inst"
           (circular-progress :value "${EWW_RAM.used_mem_perc}"
@@ -131,6 +135,7 @@
                 "${round(EWW_RAM.used_mem_perc, 0)}%"))
           (box :class "prog_label" 
             "ram"))
+        ; CPU
         (box :space-evenly false
           :class "prog_inst"
           (circular-progress :value "${EWW_CPU.avg}"
@@ -143,6 +148,7 @@
                 "${round(EWW_CPU.avg, 0)}%"))
             (box :class "prog_label" 
               "cpu"))
+        ; DISK
         (box :space-evenly false
           :class "prog_inst"
           (circular-progress :value "${fsused / fscap * 100}"
@@ -183,11 +189,14 @@
           "󰃞"))
       )
     (space)
+
+    ; MPD
     (box :space-evenly false
       :class "mpd_wrap"
       :orientation "v"
-      (box
-      :space-evenly false
+
+      ; first line
+      (box :space-evenly false
         (centerbox :orientation "h"
           :hexpand true
           :class "mpd_track_wrap"
@@ -215,6 +224,8 @@
         (box :class "mpd_icon"
           "󰎈"))
       (space-small)
+
+      ; second line
       (box :space-evenly false
           (button :onclick "mpc toggle"
             (icon :icon "${mpd-playing ? "󰏤" : "󰐊"}"))

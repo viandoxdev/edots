@@ -19,11 +19,11 @@
 (defvar GH_CTRB_TRANSITION_DURATION "250")
 (defvar gh-ctrb-transition-duration "250ms") ; should match above 
 (defvar gh-ctrb-transition "slideleft")
-(defvar gh-ctrb-reveal "center")
-(defvar gh-ctrb-week 0)
-(defvar gh-ctrb-week-left 1)
-(defvar gh-ctrb-week-right 1)
-(defvar gh-ctrb-day-current 0)
+(defvar gh-ctrb-reveal "center") ; which week to show: "left", "center" or "right"
+(defvar gh-ctrb-week 0) ; the currently displayed week, 0 is nonw, 1 ... n is n weeks ago, up to a year
+(defvar gh-ctrb-week-left 1) ; left (hidden) week
+(defvar gh-ctrb-week-right 1) ; right (hidden) week
+(defvar gh-ctrb-day-current 0) ; the currently selected day
 
 (defwidget github-page [index]
   (bpage :index index
@@ -31,6 +31,8 @@
       :hexpand true
       :space-evenly false
       :class "gh_page"
+
+      ; AVATAR / NAME
       (box :space-evenly false
         :class "gh_header"
         (button :onclick "eww update gh-reload-avatar=${!gh-reload-avatar}"
@@ -59,6 +61,7 @@
               (button :onclick `rm ${gh-avatar}; eww update gh-avatar=''; eww update gh-avatar=$(~/dots/config/eww/sh/github.sh avatar)`
                 :valign "center"
                 "󰑓 Avatar")))))
+      ; WEEKS
       (box :space-evenly false
         :hexpand true
         (revealer :duration gh-ctrb-transition-duration
@@ -101,14 +104,8 @@
       (contrib-day :contrib {gh-ctrb.data[week][6].contributionCount} :index 6))
   ))
 (defwidget contrib-day [index contrib]
-  ; I didn't think I'd ever get to performance intensive yuck but here it is.
   (button :space-evenly false
     :onclick "eww update gh-ctrb-day-current=${index}"
     :active true
     :valign "center"
-    :class "contrib_day ${gh-ctrb-day-current == index ? "focused" : ""} ${
-      contrib == 0 ? "contrib_day_0" :
-      contrib == 1 || contrib == 2 ? "contrib_day_1" :
-      contrib == 3 || contrib == 4 ? "contrib_day_2" :
-      contrib == 5 || contrib == 6 ? "contrib_day_3" : "contrib_day_4"}"
-    ))
+    :class "contrib_day contrib_day_${contrib} ${gh-ctrb-day-current == index ? "focused" : ""}"))

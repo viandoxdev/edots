@@ -32,7 +32,9 @@
         (box :class "bar"
           :orientation "v"
           :space-evenly "false"
-          (box :orientation "v" ; top
+
+
+          (box :orientation "v" ; main box
             :valign "start"
             :vexpand "true"
             :space-evenly "false"
@@ -42,7 +44,7 @@
             (github-page :index "1"))
 
             
-          (box :orientation "v" ; bottom
+          (box :orientation "v" ; footer
             :class "footer"
             :valign "end"
             :space-evenly "false"
@@ -98,6 +100,17 @@
 ;(defwidget battery []
 ;  (icon :icon "${['󱃍','󰁺','󰁻','󰁼','󰁽','󰁾','󰁿','󰂀','󰂁','󰂂','󰁹','󰢟','󰢜','󰂆','󰂇','󰂈','󰢝','󰂉','󰢞','󰂊','󰂋','󰂅'][round(EWW_BATTERY.BAT0.capacity / 10, 0) + (EWW_BATTERY.BAT0.status == 'Charging' ? 10 : 0)]}"))
 
+(defwindow test
+  :monitor 0
+  :geometry (geometry :x 0
+              :y 0
+              :width "100px"
+              :height "100px"
+              :anchor "center")
+  (button :style "background: white;"
+          :onclick "echo left >> ~/test"
+          :onrightclick "echo right >> ~/test"))
+
 ; Hack to keep some variables updating
 (defwindow _keepalive
            :monitor 0
@@ -108,15 +121,15 @@
            :stacking "bg"
            :exclusive false
   (box
-    "${sway-workspaces}"
-    "${mpd-track}"
-    "${mpd-track-short}"
-    "${mpd-volume}"
-    "${mpd-repeat}"
-    "${mpd-random}"
-    "${mpd-single}"
-    "${mpd-playing}"
-    "${mpd-trough}"
-    "${gh-ctrb-transition-duration}"
-    "${gh-ctrb}"
+    {sway-workspaces}
+    {mpd-track}
+    {mpd-track-short}
+    {mpd-volume}
+    {mpd-repeat}
+    {mpd-random}
+    {mpd-single}
+    {mpd-playing}
+    {mpd-trough}
+    {gh-ctrb-transition-duration}
+    {gh-ctrb}
     ))
