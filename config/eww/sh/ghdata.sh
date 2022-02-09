@@ -5,9 +5,8 @@ log() {
 }
 
 ghsh="$HOME/dots/config/eww/sh/github.sh"
-user_date="$($ghsh user_info | jq -r '.createdAt')"
-user_year="$(date -d"$user_date" +%Y)"
-mkdir -p "$HOME/.cache/dots/github/months"
+# the name of all the kind of contributions (must match in github.sh)
+NAMES=("commits" "issues" "pull_requests" "pull_requests_reviews" "repositories")
 
 query_year() {
 
@@ -18,8 +17,6 @@ query_year() {
 
 	log "querying $start_year -> $end_year"
 	log ''
-
-	NAMES=("commits" "issues" "pull_requests" "pull_requests_reviews" "repositories")
 
 	mkdir -p "$dir/months"
 	
@@ -93,34 +90,95 @@ query_year() {
 	echo "$res"
 }
 
-current_year="$(date -u +%Y)"
-current_month="$(date -u +%Y%m)" # YYYYMM
-user_month="$(date -u -d"$user_date" +%Y%m)"
-year="$((user_year - 1))" # year will be incremented right after
+query_month() {
+	# $1 is a month in YYYYMM format
+	date_start="$(date -u -d"${1}01" -Is)"
+	date_end="$(date -u -d"${1}01 + 1 month" -Is)"
+	dir="$(mktemp -d)"
 
-while ! [ "$year" = "$current_year" ]; do
-	log ''
-	year=$((year + 1))
-	res="$(query_year "$year")"
-
-	log 'cleaning up'
+	log "querying month from $date_start -> $date_end"
 	log ''
 
-	# save the months we want to cache, ignoring the months before the account's
-	# creation as well as the one after or equal to the current one.
-	for file in "$res/"* ; do
-		fmonth="$(cut -d "." -f1 <<< "$(basename "$file")")" # YYYYMM of file
-
-		# this works because in YYYYMM if DATE1 > DATE2 (numerically),
-		# then DATE1 is after DATE2 (time wise)
-		if [ "$fmonth" -ge "$user_month" ] && [ "$fmonth" -lt "$current_month" ]; then
-			mv "$file" "$HOME/.cache/dots/github/months/"
-		else
-			log "ignoring $fmonth"
-		fi
+	# query data from API and put into $name.json 
+	for i in "${!NAMES[@]}"; do
+		n="${NAMES[i]}"
+		log "processing $n $i/${#NAMES[@]}"
+		log '  querying'
+		$ghsh "$n" "$date_start" "$date_end" > "$dir/data.json"
+		log '  organizing'
+		jq --arg n "$n" 'map(. + {type: $n})' < "$dir/data.json" > "$dir/$n.json"
 	done
 
-	# res is in temp, so we delete it once were done saving what we want
-	rm -r "$res"
-done
+	inputs=()
+	for n in "${NAMES[@]}"; do
+		inputs+=("$dir/$n.json")
+	done
 
+	jq -n '[inputs] | flatten | sort_by(.date | fromdateiso8601)' "${inputs[@]}" -c
+
+	rm -r "$dir"
+}
+
+query_all() {
+	# query all data from $1 to now, aligns on years.
+
+	start_year="$(date -d"$1" +%Y)"
+	start_month="$(date -u -d"$1" +%Y%m)"
+	# current year in utc
+	current_year="$(date -u +%Y)"
+	# current date in utc (YYYYMM)
+	current_month="$(date -u +%Y%m)" # YYYYMM
+	# year variable to count up to now
+	year="$((start_year - 1))" # year will be incremented right after
+
+	mkdir -p "$HOME/.cache/dots/github/months"
+
+	while ! [ "$year" = "$current_year" ]; do
+		log ''
+		year=$((year + 1))
+		# res is the path to a folder in /tmp containing the json files representing every month of $year
+		res="$(query_year "$year")"
+
+		log 'cleaning up'
+		log ''
+
+		# save the months we want to cache, ignoring the months before the account's
+		# creation as well as the one after or equal to the current one.
+		for file in "$res/"* ; do
+			fmonth="$(cut -d "." -f1 <<< "$(basename "$file")")" # YYYYMM of file
+
+			# this works because in YYYYMM if DATE1 > DATE2 (numerically),
+			# then DATE1 is after DATE2 (time wise)
+			if [ "$fmonth" -ge "$start_month" ] && [ "$fmonth" -lt "$current_month" ]; then
+				mv "$file" "$HOME/.cache/dots/github/months/"
+			else
+				log "ignoring $fmonth"
+			fi
+		done
+
+		# res is in temp, so we delete it once were done saving what we want
+		rm -r "$res"
+	done
+}
+
+run() {
+	# user's account's creation date
+	user_date="$($ghsh user_info | jq -r '.createdAt')"
+	case "$1" in
+		"all")
+			query_all "$user_date"
+			;;
+		"month")
+			query_month "$(date -u +%Y%m)"
+			;;
+		*)
+			log 'unknown command'
+			;;
+	esac
+}
+
+if [ "$2" == "-v" ] || [ "$2" == "--verbose" ]; then
+	run "$1"
+else
+	run "$1" 2>/dev/null
+fi

@@ -119,17 +119,23 @@ case "$1" in
 		} | jq -c '(.data.viewer.contributionsCollection.contributionCalendar.weeks | .[] |= .contributionDays) | {length: length, data: . | reverse}'
 		;;
 	"user_info")
-		{ req <<- END
-			query {
-			  viewer {
-			    name
-			    login
-			    email
-			    createdAt
-			  }
-			}
-			END
-		} | jq '.data.viewer'
+		# cached in /tmp because it gets automatically destroyed on reboot (if /tmp is a tmpfs)
+		if [ -f "/tmp/dots_github_user_info.json" ]; then
+			jq -c < "/tmp/dots_github_user_info.json"
+		else
+			{ req <<- END
+				query {
+				  viewer {
+				    name
+				    login
+				    email
+				    createdAt
+				  }
+				}
+				END
+			} | jq '.data.viewer' > "/tmp/dots_github_user_info.json"
+			jq -c < "/tmp/dots_github_user_info.json"
+		fi
 		;;
 	"issues")
 		from="\"$2\""

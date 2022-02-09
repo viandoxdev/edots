@@ -24,6 +24,7 @@
 (defvar gh-ctrb-week-left 1) ; left (hidden) week
 (defvar gh-ctrb-week-right 1) ; right (hidden) week
 (defvar gh-ctrb-day-current 0) ; the currently selected day
+(defvar gh-ctrb-day-data '') ; json data about all thats been done that day
 
 (defwidget github-page [index]
   (bpage :index index
@@ -76,8 +77,16 @@
           :transition "slideleft"
           :reveal {gh-ctrb-reveal == "right"}
           (contrib-week :week gh-ctrb-week-right)))
+      "${gh-ctrb.data[gh-ctrb-week][gh-ctrb-day-current].date}"
+      (contrib-node-optional :array {gh-ctrb-day-data} :index 0)
       )))
 
+(defwidget contrib-node-optional [array index]
+  (literal :content {array.length > index ? "(contrib-node :contrib {array.data[index]})" : ""}))
+(defwidget contrib-node [contrib]
+  (literal :content "(contrib-node-${contrib.type} :contrib contrib)"))
+(defwidget contrib-node-commits [contrib]
+  "${contrib.commitCount} commits ${contrib.repository.name}/${contrib.repository.owner.login}")
 (defwidget contrib-week [week]
   (box :orientation "v"
     :space-evenly false
@@ -95,17 +104,17 @@
           :secondary {week == 0})))
     (space-small)
     (box :space-evenly false
-      (contrib-day :contrib {gh-ctrb.data[week][0].contributionCount} :index 0)
-      (contrib-day :contrib {gh-ctrb.data[week][1].contributionCount} :index 1)
-      (contrib-day :contrib {gh-ctrb.data[week][2].contributionCount} :index 2)
-      (contrib-day :contrib {gh-ctrb.data[week][3].contributionCount} :index 3)
-      (contrib-day :contrib {gh-ctrb.data[week][4].contributionCount} :index 4)
-      (contrib-day :contrib {gh-ctrb.data[week][5].contributionCount} :index 5)
-      (contrib-day :contrib {gh-ctrb.data[week][6].contributionCount} :index 6))
+      (contrib-day :date {gh-ctrb.data[week][0].date} :contrib {gh-ctrb.data[week][0].contributionCount} :index 0)
+      (contrib-day :date {gh-ctrb.data[week][1].date} :contrib {gh-ctrb.data[week][1].contributionCount} :index 1)
+      (contrib-day :date {gh-ctrb.data[week][2].date} :contrib {gh-ctrb.data[week][2].contributionCount} :index 2)
+      (contrib-day :date {gh-ctrb.data[week][3].date} :contrib {gh-ctrb.data[week][3].contributionCount} :index 3)
+      (contrib-day :date {gh-ctrb.data[week][4].date} :contrib {gh-ctrb.data[week][4].contributionCount} :index 4)
+      (contrib-day :date {gh-ctrb.data[week][5].date} :contrib {gh-ctrb.data[week][5].contributionCount} :index 5)
+      (contrib-day :date {gh-ctrb.data[week][6].date} :contrib {gh-ctrb.data[week][6].contributionCount} :index 6))
   ))
-(defwidget contrib-day [index contrib]
+(defwidget contrib-day [index contrib date]
   (button :space-evenly false
-    :onclick "eww update gh-ctrb-day-current=${index}"
+    :onclick "eww update gh-ctrb-day-current=${index}; ~/dots/config/eww/sh/contributions.sh '${date}' &"
     :active true
     :valign "center"
     :class "contrib_day contrib_day_${contrib} ${gh-ctrb-day-current == index ? "focused" : ""}"))
