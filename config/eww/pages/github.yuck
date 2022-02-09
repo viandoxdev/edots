@@ -77,8 +77,8 @@
           :transition "slideleft"
           :reveal {gh-ctrb-reveal == "right"}
           (contrib-week :week gh-ctrb-week-right)))
-      "${gh-ctrb.data[gh-ctrb-week][gh-ctrb-day-current].date}"
-      (contrib-node-optional :array {gh-ctrb-day-data} :index 0)
+      ;"${gh-ctrb.data[gh-ctrb-week][gh-ctrb-day-current].date}"
+      ;(contrib-node-optional :array {gh-ctrb-day-data} :index 0)
       )))
 
 (defwidget contrib-node-optional [array index]
