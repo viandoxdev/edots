@@ -24,6 +24,8 @@ $term_color15: #CCCCCC; // bright white
 
 $color_bat: #393939;
 
+@import url("./css/volume.scss");
+
 * {
 	all: unset;
 }
@@ -242,6 +244,13 @@ window {
 .footer {
 	background: $color2;
 }
+.text_secondary {
+	color: $color4;
+}
+.link {
+	font-weight: bold;
+}
+
 .gh_avatar {
 	min-width: 4em;
 	min-height: 4em;
@@ -272,9 +281,6 @@ window {
 	padding: 15px 25px 15px 25px;
 	border-radius: 6px;
 }
-.text_secondary {
-	color: $color4;
-}
 .gh_week {
 	padding: 1em;
 	padding-top: 0;
@@ -297,12 +303,8 @@ window {
 	border-bottom-right-radius: .4em;
 }
 .contrib_day:hover, .contrib_day.focused  {
-	min-height: .6em;
+	min-height: .7em;
 	border-radius: 0.1em;
-}
-
-.contrib_day {
-	
 }
 .contrib_day   { background: #F6F5FF; }
 .contrib_day_0 { background: $color2; }
@@ -311,3 +313,66 @@ window {
 .contrib_day_3 { background: #A391D9; }
 .contrib_day_4 { background: #D4CDF0; }
 .contrib_day_5 { background: #EEEBFC; }
+.gh_day_info {
+	margin-left:  1em;
+	margin-right: 1em;
+	border-radius: 0.4em;
+	background: $color2;
+}
+.gh_day_info .placeholder {
+	padding: 0.8em;
+	font-size: 0.65em;
+}
+.gh_ctrb_node > .icon {
+	padding-left: .15em;
+	padding-right: .1em;
+	color: $color1;
+}
+.gh_ctrb_node_lit.first > .gh_ctrb_node > .icon {
+	border-top-left-radius: 0.4em;
+}
+.gh_ctrb_node_lit.first > .gh_ctrb_node > .content {
+	border-top-right-radius: 0.4em;
+}
+.gh_ctrb_node_lit.last > .gh_ctrb_node > .icon {
+	border-bottom-left-radius: 0.4em;
+}
+.gh_ctrb_node_lit.last > .gh_ctrb_node > .content {
+	border-bottom-right-radius: 0.4em;
+}
+.gh_ctrb_node > .content {
+	padding: 0.8em;
+	font-size: 0.65em;
+	margin-left: 0.3em;
+}
+.gh_ctrb_node.commit > .icon {
+	background: $term_color10;
+}
+.gh_ctrb_node.issue > .icon {
+	background: $term_color12;
+}
+.gh_ctrb_node.repo > .icon {
+	background: $term_color13;
+}
+.gh_ctrb_node.pr > .icon {
+	background: $term_color3;
+}
+.gh_ctrb_node.prrev > .icon {
+	background: $term_color9;
+}
+.gh_ctrb_node.empty > .icon {
+	background: $term_color7;
+}
+.gh_day_date {
+	font-size: 0.8em;
+	margin-top: 0.6em;
+	padding-left: 1.0em;
+	padding-right: 1.0em;
+	color: $color_bat;
+}
+.gh-line {
+	margin: 0.3em;
+	min-height: 1px;
+	border-radius: 1px;
+	background-color: $color_bat;
+}

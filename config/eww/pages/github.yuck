@@ -77,16 +77,129 @@
           :transition "slideleft"
           :reveal {gh-ctrb-reveal == "right"}
           (contrib-week :week gh-ctrb-week-right)))
-      ;"${gh-ctrb.data[gh-ctrb-week][gh-ctrb-day-current].date}"
-      ;(contrib-node-optional :array {gh-ctrb-day-data} :index 0)
+      (box :class "gh_day_info"
+        :space-evenly false
+        :orientation "v"
+        (contrib-node :index 0)
+        (contrib-node :index 1)
+        (contrib-node :index 2)
+        (contrib-node :index 3)
+        (revealer :duration "100ms"
+          :transition "slideup"
+          :reveal {gh-ctrb-day-data.length > 4}
+          (contrib-node-more)))
+      (box :class "gh_day_date"
+        (box :class "gh-line"
+          :valign "center")
+        "${replace(gh-ctrb.data[gh-ctrb-week][gh-ctrb-day-current].date, "-", "/")}"
+        (box :class "gh-line"
+          :valign "center"))
       )))
 
-(defwidget contrib-node-optional [array index]
-  (literal :content {array.length > index ? "(contrib-node :contrib {array.data[index]})" : ""}))
-(defwidget contrib-node [contrib]
-  (literal :content "(contrib-node-${contrib.type} :contrib contrib)"))
+(defwidget contrib-node [index]
+  (revealer :transition "slideup"
+    :duration "100ms"
+    :reveal {gh-ctrb-day-data.length > index || (index == gh-ctrb-day-data.length && index == 0)}
+    (literal 
+      :class "gh_ctrb_node_lit ${
+        gh-ctrb-day-data.length - 1 == index || ; IF this node has the last content
+        (index == gh-ctrb-day-data.length && index == 0) ? ; OR this node is the only one and there is no content
+        "last" : ""
+      } ${index == 0 ? "first" : ""}"
+      :content {
+        gh-ctrb-day-data.length > index ?
+          "(contrib-node-${replace(gh-ctrb-day-data.data[index].type, "_", "-")} :contrib `${replace(gh-ctrb-day-data.data[index], "`", "'")}`)" :
+          "(contrib-node-empty)"})))
+
+(defwidget repo-link [repo]
+  (link :href {repo.url}
+    {length(repo.name) > 12 ? "${replace(repo.name, "^(.{11}).+$", "\\1")}…" : repo.name}))
+
+(defwidget contrib-node-empty []
+  (box :class "gh_ctrb_node empty"
+    :space-evenly false
+    (icon :icon "󰂭")
+    (box :class "content"
+      :space-evenly false
+      "Nothing on that day")))
+
+(defwidget contrib-node-more []
+  (box :class "gh_ctrb_node_lit last"
+    (box :class "gh_ctrb_node empty"
+      :space-evenly false
+      (icon :icon "…")
+      (box :class "content"
+        :space-evenly false
+        "And more !"))))
+
 (defwidget contrib-node-commits [contrib]
-  "${contrib.commitCount} commits ${contrib.repository.name}/${contrib.repository.owner.login}")
+  (box :class "gh_ctrb_node commit"
+    :space-evenly false
+    (icon :icon "󰜘")
+    (box :class "content"
+      :space-evenly false
+      "pushed ${contrib.commitCount > 1 ? contrib.commitCount : "a"} commit${contrib.commitCount > 1 ? "s" : ""} to "
+      (repo-link :repo "${contrib.repository}"))))
+
+(defwidget contrib-node-issues [contrib]
+  (box :class "gh_ctrb_node issue"
+    :space-evenly false
+    (icon :icon "󰗖")
+    (box :class "content"
+      :space-evenly false
+      "opened issue "
+      (link :href "${contrib.url}"
+        "#${contrib.number} ")
+      " on "
+      (repo-link :repo "${contrib.repository}"))))
+
+(defwidget contrib-node-repositories [contrib]
+  (box :class "gh_ctrb_node repo"
+    :space-evenly false
+    (icon :icon "${contrib.isFork ? "󰓁" : "󰭤"}")
+    (box :class "content"
+      :space-evenly false
+      "${contrib.isFork ? "forked " : "created new repo "}"
+      (literal :content {contrib.isFork ? `(link :href "${contrib.parent.url}" " ${contrib.parent.owner.login}/${contrib.parent.name} ")` : ``})
+      (literal :content {contrib.isFork ? `(label :text " to ")` : ``})
+      (repo-link :repo "${contrib}"))))
+
+(defwidget contrib-node-pull-requests [contrib]
+  (box :class "gh_ctrb_node pr"
+    :space-evenly false
+    (icon :icon "󰓂")
+    (box :class "content"
+      :space-evenly false
+      "opened PR "
+      (link :href "${contrib.url}"
+        "#${contrib.number} ")
+      " on "
+      (repo-link :repo "${contrib.repository}"))))
+(defwidget contrib-node-pull-requests-reviews [contrib]
+  (box :class "gh_ctrb_node prrev"
+    :space-evenly false
+    (icon :icon "${
+      contrib.state == "APPROVED" ? "󱓏" :
+      contrib.state == "CHANGES_REQUESTED" ? "󱓊" :
+      contrib.state == "COMMENTED" ? "󰘬" :
+      contrib.state == "DISMISSED" ? "󱓌" :
+      contrib.state == "PENDING" ? "󱓎" : "󰘬"
+      }")
+    (box :class "content"
+      :space-evenly false
+      (link :href "${contrib.url}"
+      "${
+        contrib.state == "APPROVED" ? "approved of" :
+        contrib.state == "CHANGES_REQUESTED" ? "reviewed" :
+        contrib.state == "COMMENTED" ? "commented on" :
+        contrib.state == "DISMISSED" ? "dismissed" :
+        "reviewed"
+      } ")
+      (repo-link :repo "${contrib.pullRequest.repository}")
+      "/"
+      (link :href "${contrib.pullRequest.url}"
+        "${contrib.pullRequest.number}"))))
+
 (defwidget contrib-week [week]
   (box :orientation "v"
     :space-evenly false
@@ -95,7 +208,7 @@
       (button :onclick `~/dots/config/eww/sh/ctrb.sh previous`
         :halign "start"
         (icon :icon "󰅁"
-          :secondary {week > gh-ctrb.length - 2}))
+          :secondary {week > (gh-ctrb.length - 2)}))
       (label :text "${week == 0 ? "this week" : week == 1 ? "last week" : "${week} weeks ago"}"
         :halign "center")
       (button :onclick `~/dots/config/eww/sh/ctrb.sh next`
@@ -114,7 +227,7 @@
   ))
 (defwidget contrib-day [index contrib date]
   (button :space-evenly false
-    :onclick "eww update gh-ctrb-day-current=${index}; ~/dots/config/eww/sh/contributions.sh '${date}' &"
+    :onclick "~/dots/config/eww/sh/ctrb.sh day ${index}"
     :active true
     :valign "center"
     :class "contrib_day contrib_day_${contrib} ${gh-ctrb-day-current == index ? "focused" : ""}"))

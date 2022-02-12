@@ -73,9 +73,20 @@ case "$1" in
 			eww update gh-ctrb-transition-duration="${duration}ms"
 		fi
 		;;
+	"day")
+		# $2 is index
+		[ -z "$2" ] || eww update gh-ctrb-day-current="$2"
+		;;
 	*)
 		;;
 esac
+
+day="$(eww get gh-ctrb-day-current 2>/dev/null || 0)"
+# date of selected day in YYYY-MM-DD format
+date="$(eww get gh-ctrb | jq -r ".data[$week][$day].date")"
+# update data about selected day
+~/dots/config/eww/sh/contributions.sh "$date"
+
 next_week=$((week - 1 <  0  ?  0  : week - 1))
 last_week=$((week + 1 > max ? max : week + 1))
 

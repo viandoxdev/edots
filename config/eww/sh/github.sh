@@ -157,6 +157,14 @@ case "$1" in
 			            publishedAt
 			            title
 			            number
+			            repository {
+			              url
+			              name
+			              owner {
+			                login
+			                url
+			              }
+			            }
 			          }
 			        }
 			      }
@@ -186,6 +194,13 @@ case "$1" in
 			            publishedAt
 			            title
 			            number
+			            repository {
+			              name
+			              owner {
+			                login
+			                url
+			              }
+			            }
 			          }
 			        }
 			      }
@@ -288,6 +303,7 @@ case "$1" in
 			          repository {
 			            url
 			            name
+				    isFork
 			            parent {
 			              url
 			              name

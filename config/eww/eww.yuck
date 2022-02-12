@@ -6,9 +6,11 @@
 
 (defvar sidebar-revealed "false")
 ; TODO: set that back to 0 when page 2 is done
-(defvar sidebar-page 0)
+(defvar sidebar-page 1)
 ; remember to update that
 (defvar sidebar-page-max 1)
+
+(include "./volume.yuck")
 
 (include "./pages/home.yuck")
 (include "./pages/github.yuck")
@@ -41,7 +43,8 @@
             ; PAGES
 
             (home-page :index "0")
-            (github-page :index "1"))
+            (github-page :index "1")
+          )
 
             
           (box :orientation "v" ; footer
@@ -91,10 +94,16 @@
       :space-evenly "false"
       (children))))
 (defwidget icon [icon ?secondary]
-  (box :class "icon ${secondary ? "text_secondary" : ""}"
+  (box :class "icon ${secondary != "" && secondary ? "text_secondary" : ""}"
     icon))
 (defwidget workspace [index]
-  (box :class "workspace ${sway-workspaces[index].focused ? "workspace-focused" : ""} ${sway-workspaces[index].used ? "" : "workspace-unused"}"))
+  (button :onclick "swaymsg workspace ${index + 1}"
+    :class "workspace ${sway-workspaces[index].focused ? "workspace-focused" : ""} ${sway-workspaces[index].used ? "" : "workspace-unused"}"))
+(defwidget link [href]
+  (eventbox :cursor "pointer"
+    (button :class "link"
+      :onclick "xdg-open '${href}'"
+     (children))))
 
 ; more unused code
 ;(defwidget battery []
@@ -107,9 +116,10 @@
               :width "100px"
               :height "100px"
               :anchor "center")
-  (button :style "background: white;"
-          :onclick "echo left >> ~/test"
-          :onrightclick "echo right >> ~/test"))
+  (box :space-evenly false
+    :style "background:white"
+    :orientation "v"
+    "${length('{"a": 1, "b": [1,2]}'.b) >= -2}"))
 
 ; Hack to keep some variables updating
 (defwindow _keepalive

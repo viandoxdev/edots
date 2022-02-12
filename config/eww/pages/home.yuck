@@ -206,17 +206,12 @@
             "󰅁")
             (label :halign "center"
               :limit-width 21
-              ; regex goes brbrbrbrrbrbrbr
-
-              ; this line first compute the displayed title (see :text) and then uses a regex to:
-              ; if it is more than 20 chrs long, replace it with //__LONG__//,
-              ; if it isn't keep it as is. Then the result is matched to see if it is //__LONG__//,
-              ; and if it is the mpd_track_long class is added
-
-              ; TLDR; add the mpd_track_long class if the label is 20 chrs or more
-              :class "mpd_track ${replace("${replace("${mpd-track}", "^.{20,}$", "${mpd-track-short}")}", "^.{20,}$", "//__LONG__//") == "//__LONG__//" ? "mpd_track_long" : ""}"
-              ; this replaces mpd-track with mpd-track-short if mpd track is longer than 20 chrs.
-              :text "${replace("${mpd-track}", "^.{20,}$", "${mpd-track-short}")}")
+              :class "mpd_track ${
+                length(
+                  length(mpd-track) >= 20 ? mpd-track-short : mpd-track
+                ) >= 20 ? "mpd_track_long" : ""
+              }"
+              :text "${length(mpd-track) >= 20 ? mpd-track-short : mpd-track}")
           (button :halign "end"
             :class "mpd_button"
             :onclick "mpc next"

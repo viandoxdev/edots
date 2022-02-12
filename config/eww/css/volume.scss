@@ -1,0 +1,25 @@
+.volume_box {
+	background: rgba(0,0,0,0.8);
+	border-radius: 1em;
+	padding: 2em;
+	color: white;
+}
+
+.volume_box .icon {
+	font-size: 6em;
+	margin-bottom: 10px;
+}
+
+
+.volume_box .progress progress {
+	background: white;
+	border-radius: 3px;
+}
+.volume_box .progress trough {
+	background: rgba(177,177,177, 0.2);
+	min-width: 112px;
+	border-radius: 3px;
+}
+.volume_box .progress {
+	border-radius: 3px;
+}

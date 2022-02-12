@@ -81,8 +81,15 @@ bindsym $mod+F1 exec ~/dots/config/sway/screenshot.sh
 # toggle sidebar
 bindsym $mod+F2 exec ~/dots/config/eww/scripts/sidebar/toggle.sh
 bindsym $mod+F3 exec mpc toggle
-bindsym $mod+Alt+Down exec amixer sset Master 2%-
-bindsym $mod+Alt+Up exec amixer sset Master 2%+
+
+bindsym $mod+Alt+Down exec ~/dots/config/sway/audio.sh lower
+bindsym $mod+Alt+Up exec ~/dots/config/sway/audio.sh raise
+
+# consider changing the binds here to match your hardware
+bindsym XF86AudioLowerVolume exec ~/dots/config/sway/audio.sh lower
+bindsym XF86AudioRaiseVolume exec ~/dots/config/sway/audio.sh raise
+bindsym XF86AudioMicMute exec ~/dots/config/sway/audio.sh toggle
+
 bindsym $mod+g exec ~/dots/config/sway/gaps.sh
 bindsym $mod+l exec swaylock -c '#000000'
 
