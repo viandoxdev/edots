@@ -1,24 +1,29 @@
 (defvar volume-icon "󰕾")
 (defvar volume-value 50)
-(defvar volume-duration "4s")
-(defvar volume-visible true)
+(defvar volume-duration "250ms")
+(defvar volume-visible false)
+(defvar volume-active false)
 
 (defwindow volume
   :monitor 0
   :geometry (geometry
               :x 0
               :y 100
-              :width "170px"
-              :height "170px"
-              :anchor "center bottom"
+              :width "50px"
+              :height "200px"
+              :anchor "right center"
               )
-  (revealer :reveal volume-visible
-    :transition "crossfade"
-    :duration volume-duration
-    (box :class "volume_box"
-      :orientation "v"
-      :space-evenly false
-      (icon :icon volume-icon
-        :valign "center")
-      (progress :value volume-value
-        :class "progress"))))
+ :stacking "overlay"
+  (box :space-evenly false
+    (eventbox :halign "end"
+      :hexpand true
+      (revealer :reveal volume-visible
+        :halign "end"
+        :transition "slideleft"
+        :duration "250ms"
+        (box :orientation "v"
+          :halign "end"
+          :style "background-position: 0% ${volume-value - 100}%;"
+          :class "volume_box ${volume-active}"
+          (box :valign "end"
+            (icon :icon volume-icon)))))))

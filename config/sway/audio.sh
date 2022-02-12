@@ -21,13 +21,12 @@ active="$(amixer sget Master | awk -F'[][]' '/^\s*Front Left/ {print $4}')"
 
 # open volume window if not already open
 eww windows | grep '^\*volume$' >/dev/null 2>&1 || eww open volume
-eww update volume-duration="0s"
 eww update volume-visible=true
-eww update volume-duration="4s"
 
 eww update volume-value="$volume"
 
 if [ "$active" = "on" ]; then
+	eww update volume-active=true
 	# shellcheck disable=SC2194
 	case 1 in
 		$((volume <= 0)))
@@ -44,6 +43,7 @@ if [ "$active" = "on" ]; then
 			;;
 	esac
 else
+	eww update volume-active=false
 	eww update volume-icon="󰖁"
 fi
 
@@ -55,13 +55,13 @@ id="$(date +%s.%N | tee /tmp/dots_volume)"
 # whichever one has its id there takes control of the volume window. The file is read by
 # other instances to know if they still control the window or not.
 
-sleep 1
+sleep 3
 
 # exit if we lost the control
 [ "$id" = "$(cat /tmp/dots_volume)" ] || exit
 eww update volume-visible=false
 
-sleep 4
+sleep 0.25
 
 # same but later
 [ "$id" = "$(cat /tmp/dots_volume)" ] || exit
