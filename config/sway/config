@@ -104,7 +104,6 @@ client.urgent #ff000000 #ff000000 #ffffff
 
 titlebar_border_thickness 3
 exec eww daemon
-exec eww open _keepalive
 # update eww vars for mpd
 exec mpc random && mpc random
 exec mpc volume +1 && mpc volume -1
