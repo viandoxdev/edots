@@ -24,7 +24,7 @@
 (defvar gh-ctrb-week-left 1) ; left (hidden) week
 (defvar gh-ctrb-week-right 1) ; right (hidden) week
 (defvar gh-ctrb-day-current 0) ; the currently selected day
-(defvar gh-ctrb-day-data '') ; json data about all thats been done that day
+(defvar gh-ctrb-day-data '{"data":[],"length":0}') ; json data about all thats been done that day
 
 (defwidget github-page [index]
   (bpage :index index
