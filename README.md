@@ -9,7 +9,8 @@
  - Kitty
  - zsh
  - jetbrains mono
- - wofi (soon)
+ - wofi
+ - more (not everyting is documented yet)
 
 ## How to use
 

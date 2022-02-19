@@ -1,0 +1,38 @@
+* {
+	all: unset;
+	font-family: "JetBrains Mono";
+}
+
+#window {
+	background-color: transparent;
+	padding: 1em;
+	color: --wofi-color1;
+	border-radius: 1em;
+}
+
+#entry {
+	padding: .5em 1em .5em 1em;
+	font-family: 
+}
+
+#input {
+	padding: 1em;
+	padding-bottom: .8em;
+	border-bottom: 1px solid --wofi-color2;
+}
+
+#input > *:first-child {
+	margin-right: 1em;
+}
+
+#entry:selected {
+	background-color: --wofi-color2;
+}
+
+#outer-box {
+	margin: 1em;
+	background-color: --wofi-color0;
+	padding-bottom: 1em;
+	border-radius: 1em;
+	box-shadow: 0 0 0.5em rgba(0,0,0,0.3);
+}
