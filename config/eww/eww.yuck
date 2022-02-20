@@ -6,7 +6,7 @@
 
 (defvar sidebar-revealed "false")
 ; TODO: set that back to 0 when page 2 is done
-(defvar sidebar-page 0)
+(defvar sidebar-page 1)
 ; remember to update that
 (defvar sidebar-page-max 1)
 
@@ -86,7 +86,7 @@
     :height 30))
 (defwidget bpage [index]
   (revealer :reveal {sidebar-page == index}
-    :transition "slidedown"
+    :transition "${index % 2 == 1 ? "slideup" : "slidedown"}"
     :duration "250ms"
     (box :class "bar_page"
       :orientation "v"
@@ -115,10 +115,10 @@
               :width "100px"
               :height "100px"
               :anchor "center")
-  (box :space-evenly false
-    :style "background:white"
-    :orientation "v"
-    "${length('{"a": 1, "b": [1,2]}'.b) >= -2}"))
+    (box :space-evenly false
+                :orientation "v"
+      (for a in '["a","b","c"]'
+        {a})))
 
 ; Hack to keep some variables updating
 (defwindow _keepalive

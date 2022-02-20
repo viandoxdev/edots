@@ -1,3 +1,4 @@
+// vim: set fdm=marker
 $color0: rgba(  9,  9,  9,1.0);
 $color1: rgba(255,255,255,1.0);
 $color2: rgba( 20, 20, 20,1.0);
@@ -24,12 +25,37 @@ $term_color15: #CCCCCC; // bright white
 
 $color_bat: #393939;
 
-@import url("./css/volume.scss");
+// VOLUME
+///{{{
+.volume_box {
+	background-color: $color0;
+	background-size: 100% 200%;
+	background-position: 0% 0%;
+	background-repeat: no-repeat;
+	border: 2.1px solid $color2;
+	color: $color1;
+	border-radius: 50px;
+	min-width: 35px;
+	margin-right: 15px;
+}
+.volume_box.true {
+	background-image: linear-gradient(45deg, $term_color9 100%);
+}
+.volume_box.false {
+	/*background-image: repeating-linear-gradient(45deg, #F65B5B, #F65B5B 1.5%, transparent 1.5%, transparent 2%);*/
+	background-image: linear-gradient(45deg, $term_color7 100%);
+}
 
+.volume_box .icon {
+	margin-bottom: 10px;
+	font-size: 2em;
+}
+//}}}
+// SIDEBAR
+//{{{
 * {
 	all: unset;
 }
-
 window {
 	background: none;
 }
@@ -38,6 +64,79 @@ window {
 	font-size: larger;
 	color: $color1;
 }
+.shadow {
+	min-width: 20px;
+	background: linear-gradient(
+		to right,
+		hsla(0, 0%, 1%, 0.5) 0%,
+		hsla(0, 0%, 1%, 0.494) 0%,
+		hsla(0, 0%, 1%, 0.476) 0.2%,
+		hsla(0, 0%, 1%, 0.448) 0.8%,
+		hsla(0, 0%, 1%, 0.412) 1.9%,
+		hsla(0, 0%, 1%, 0.37) 3.7%,
+		hsla(0, 0%, 1%, 0.324) 6.4%,
+		hsla(0, 0%, 1%, 0.275) 10.2%,
+		hsla(0, 0%, 1%, 0.225) 15.2%,
+		hsla(0, 0%, 1%, 0.176) 21.6%,
+		hsla(0, 0%, 1%, 0.13) 29.6%,
+		hsla(0, 0%, 1%, 0.088) 39.4%,
+		hsla(0, 0%, 1%, 0.052) 51.2%,
+		hsla(0, 0%, 1%, 0.024) 65.1%,
+		hsla(0, 0%, 1%, 0.006) 81.3%,
+		hsla(0, 0%, 1%, 0) 100%
+	);
+}
+.sway {
+	min-width: 230px;
+	margin-left: 10px;
+	margin-right: 10px;
+	border-radius: 2em;
+	padding: 15px;
+	background: $color0;
+	margin-top: 10px;
+}
+.workspace {
+	min-width:  10px;
+	min-height: 10px;
+	border-radius: 100%;
+	border: $color1 solid 1px;
+}
+.workspace:not(:first-child) {
+	margin-left: 1.3em;
+}
+.workspace-focused {
+	background: $color1;
+}
+.workspace-unused {
+	border-color: $color3;
+}
+.bar_reveal {
+	//background:url("/home/vndx/dots/bg.png");
+	background-size: cover; 
+}
+.bar {
+	background: $color0;
+	color: $color1;
+	font-size: 1.3em;
+	min-width: 300px;
+	font-family: "JetBrains Mono";
+	min-height: 720px;
+}
+.footer {
+	background: $color2;
+	border-radius: 1em;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.text_secondary {
+	color: $color4;
+}
+.link {
+	font-weight: bold;
+}
+//}}}
+// SIDEBAR - HOME PAGE
+//{{{
 .prog_inst > circular-progress {
 	background-color: $color2;
 }
@@ -126,37 +225,7 @@ window {
 	background: $term_color10;
 	border-radius: 4px;
 }
-.shadow {
-	min-width: 20px;
-	background: linear-gradient(
-		to right,
-		hsla(0, 0%, 1%, 0.5) 0%,
-		hsla(0, 0%, 1%, 0.494) 0%,
-		hsla(0, 0%, 1%, 0.476) 0.2%,
-		hsla(0, 0%, 1%, 0.448) 0.8%,
-		hsla(0, 0%, 1%, 0.412) 1.9%,
-		hsla(0, 0%, 1%, 0.37) 3.7%,
-		hsla(0, 0%, 1%, 0.324) 6.4%,
-		hsla(0, 0%, 1%, 0.275) 10.2%,
-		hsla(0, 0%, 1%, 0.225) 15.2%,
-		hsla(0, 0%, 1%, 0.176) 21.6%,
-		hsla(0, 0%, 1%, 0.13) 29.6%,
-		hsla(0, 0%, 1%, 0.088) 39.4%,
-		hsla(0, 0%, 1%, 0.052) 51.2%,
-		hsla(0, 0%, 1%, 0.024) 65.1%,
-		hsla(0, 0%, 1%, 0.006) 81.3%,
-		hsla(0, 0%, 1%, 0) 100%
-	);
-}
-.sway {
-	min-width: 230px;
-	margin-left: 10px;
-	margin-right: 10px;
-	border-radius: 2em;
-	padding: 15px;
-	background: $color0;
-	margin-top: 10px;
-}
+
 .sysinfo {
 	margin-right: 10px;
 }
@@ -214,47 +283,13 @@ window {
 .bat_info {
 	font-size: 2.5em;
 }
-.workspace {
-	min-width:  10px;
-	min-height: 10px;
-	border-radius: 100%;
-	border: $color1 solid 1px;
-}
-.workspace:not(:first-child) {
-	margin-left: 1.3em;
-}
-.workspace-focused {
-	background: $color1;
-}
-.workspace-unused {
-	border-color: $color3;
-}
-.bar_reveal {
-	//background:url("/home/vndx/dots/bg.png");
-	background-size: cover; 
-}
-.bar {
-	background: $color0;
-	color: $color1;
-	font-size: 1.3em;
-	min-width: 300px;
-	font-family: "JetBrains Mono";
-	min-height: 720px;
-}
 .time {
 	font-size: 4.5em;
 	font-stretch: normal;
 }
-.footer {
-	background: $color2;
-}
-.text_secondary {
-	color: $color4;
-}
-.link {
-	font-weight: bold;
-}
-
+///}}}
+// SIDEBAR - GITHUB PAGE
+///{{{
 .gh_avatar {
 	min-width: 4em;
 	min-height: 4em;
@@ -380,3 +415,68 @@ window {
 	border-radius: 1px;
 	background-color: $color_bat;
 }
+.gh_notif_scroll {
+	margin: 1em;
+	margin-top: .5em;
+	margin-bottom: 0;
+	transition: all 0.1s ease;
+
+}
+.gh_notif {
+	background-color: $color2;
+	border-radius: .5em;
+	padding: 0.5em;
+	padding-top: 0;
+	padding-left: 0;
+}
+.gh_notif:not(:first-child) {
+	margin-top: 0.3em;
+}
+.gh_notif.read {
+	color: $color3;
+}
+.gh_notif .icon {
+	font-size: 1.1em;
+	padding: 0.15em;
+	margin: 0.3em;
+	margin-right: 0.5em;
+	border-radius: 0.3em;
+	background-color: $color0;
+}
+.gh_notif .top.pullreq .icon {
+	background-color: $term_color3;
+}
+.gh_notif .top.issue .icon {
+	background-color: $term_color12;
+}
+.gh_notif .top.commit .icon {
+	background-color: $term_color10;
+}
+.gh_notif .top > label:last-child {
+	font-size: 0.5em;
+}
+.gh_notif .title {
+	margin-top: 0.7em;
+	font-size: 0.6em;
+	margin-left: 1em;
+}
+.gh_notif .read .icon {
+	margin: 0.1em;
+}
+.gh_notif .reason {
+	font-weight: bold;
+	font-size: 0.7em;
+}
+.gh_notif_sep {
+	min-height:1px;
+	margin-top: 0.7em;
+	margin-bottom: 0.4em;
+	border-radius: 2px;
+	background: $color_bat;
+}
+.gh_notif_sep_wrap label {
+	margin-left: .5em;
+	margin-right: .5em;
+	color: $color_bat;
+}
+//}}}

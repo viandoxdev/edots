@@ -26,6 +26,15 @@ req() {
 	-d "$body"				\
 	https://api.github.com/graphql
 }
+# 1 is endpoint
+# 2 is query parameters
+# 3 is type
+rest-req() {
+	uri="https://api.github.com${1}?${2}"
+	
+	curl -s -u "$user:$token" -X "$3" \
+	"$uri"
+}
 
 # how many nodes do we want at a time
 # max is 100, there really isn't any reason to set it to anything else tbh.
@@ -322,7 +331,7 @@ case "$1" in
 		} | jq -c 'map(.repository + {date: .occurredAt} | del(.occurredAt))'
 		;;
 	"rate")
-		 { req <<- END
+		{ req <<- END
 			query {
 			  rateLimit {
 			    limit
@@ -332,8 +341,15 @@ case "$1" in
 			  }
 			}
 			END
-		 } | jq '.data.rateLimit'
-		 ;;
+		} | jq '.data.rateLimit'
+		;;
+	"notifications")
+		rest-req "/notifications" "all=true" "GET" | jq 'map({id, unread, reason, subject, repo_url: .repository.html_url, date: .updated_at}) | sort_by(.date | fromdateiso8601) |  reverse | {read: . | map(select(.unread != true)), unread: . | map(select(.unread))}' -c
+		;;
+	"read_notif")
+		rest-req "/notifications/threads/$2" "" "PATCH"
+		eww update gh-notifs="$(~/dots/config/eww/sh/github.sh notifications)"
+		;;
 	*)
 		;;
 esac

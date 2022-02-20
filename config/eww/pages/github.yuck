@@ -11,6 +11,10 @@
   :interval "3600s"
   :initial "[]"
   `~/dots/config/eww/sh/github.sh contrib`)
+(defpoll gh-notifs
+  :interval "60s"
+  :initial '{"read":[],"unread":[]}'
+  `~/dots/config/eww/sh/github.sh notifications`)
 
 ; wether the reload button should be displayed
 (defvar gh-reload-avatar false)
@@ -94,7 +98,73 @@
         "${replace(gh-ctrb.data[gh-ctrb-week][gh-ctrb-day-current].date, "-", "/")}"
         (box :class "gh-line"
           :valign "center"))
-      )))
+      (scroll :class "gh_notif_scroll"
+        :hscroll false
+        :style "min-height:${170 + (5 - (gh-ctrb-day-data.length == 0 ? 1 : gh-ctrb-day-data.length)) * 35}px;"
+        (box :orientation "v"
+          :space-evenly false
+          ; IDK why, but this box is necessary
+          (box :orientation "v"
+            :space-evenly false
+            (for notif in {gh-notifs.unread}
+              (notif :notif notif)))
+          (revealer :reveal {length(gh-notifs.read) == 0}
+            :duration "0s"
+            :transition "slideup"
+            (box :space-evenly false
+              :class "gh_notif_sep_wrap"
+              (box :class "gh_notif_sep" :hexpand true :valign "center")
+              (label :text "read")
+              (box :class "gh_notif_sep" :hexpand true :valign "center")))
+          (box :orientation "v"
+            :space-evenly false
+            (for notif in {gh-notifs.read}
+              (notif :notif notif)))
+          (box :space-evenly false
+            :class "gh_notif_sep_wrap"
+            (box :class "gh_notif_sep" :hexpand true :valign "center")
+            (link :href "https://github.com/notifications" "more")
+            (box :class "gh_notif_sep" :hexpand true :valign "center"))
+          )))))
+(defwidget notif [notif]
+  (box :space-evenly false
+    :class "gh_notif ${notif.unread ? "" : "read"}"
+    :orientation "v"
+    (box :orientation "h"
+      :space-evenly false
+      :hexpand true
+      :class "top ${
+          notif.subject.type == "PullRequest" ? "pullreq" :
+          notif.subject.type == "Issue" ? "issue" :
+          notif.subject.type == "Commit" ? "commit" :
+          "other"
+        }"
+      (icon :icon "${
+          notif.subject.type == "PullRequest" ? "󰓂" :
+          notif.subject.type == "Issue" ? "󰗖" :
+          notif.subject.type == "Commit" ? "󰜘" :
+          "󰂜"
+        }"
+        :valign "start")
+      (box :halign "start"
+        :hexpand true
+        :class "reason"
+        (link :href {notif.repo_url} {replace(notif.reason, "_", " ")}))
+      (label :halign "end"
+        :text {substr(notif.date, 11, 5)}))
+    (box :space-evenly false
+      (label :class "title"
+        :text "${notif.subject.title}"
+        :wrap true
+        :hexpand true
+        :halign "start")
+      (revealer :reveal {notif.unread}
+        (eventbox :class "read"
+          :cursor "pointer"
+          (button :valign "end"
+            :timeout "6s"
+            :onclick `~/dots/config/eww/sh/github.sh read_notif ${notif.id}`
+            (icon :icon "󰄬")))))))
 
 (defwidget contrib-node [index]
   (revealer :transition "slideup"
@@ -226,7 +296,7 @@
       (contrib-day :date {gh-ctrb.data[week][6].date} :contrib {gh-ctrb.data[week][6].contributionCount} :index 6))
   ))
 (defwidget contrib-day [index contrib date]
-  (button :space-evenly false
+  (button 
     :onclick "~/dots/config/eww/sh/ctrb.sh day ${index}"
     :active true
     :valign "center"
