@@ -2,6 +2,7 @@
 
 ![screenshot](pics/1.png)
 ![screenshot](pics/2.png)
+![screenshot](pics/3.png)
 
 ## Uses
 
