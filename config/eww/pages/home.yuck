@@ -223,7 +223,7 @@
       ; second line
       (box :space-evenly false
           (button :onclick "mpc toggle"
-            (icon :icon "${mpd-playing ? "󰏤" : "󰐊"}"))
+            (icon :icon "${mpd-playing ? "󰐊" : "󰏤"}"))
           (button :onclick "mpc random"
             (icon :icon "${mpd-random ? "󰒝" : "󰒞"}"))
           (button :onclick "${mpd-repeat ? mpd-single ? "mpc single && mpc repeat" : "mpc single" : "mpc repeat"}"
@@ -237,7 +237,7 @@
               :min "0"
               :max "100"
               :orientation "h")))
-      ;(space-long)
+      (space-long)
       ;(box :class "sysinfo"
       ;  :space-evenly "false"
       ;  (box :space-evenly false

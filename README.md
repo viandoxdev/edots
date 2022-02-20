@@ -1,6 +1,7 @@
 # edots - my gentoo dots files
 
-![background](bg.png)
+![screenshot](pics/1.png)
+![screenshot](pics/2.png)
 
 ## Uses
 

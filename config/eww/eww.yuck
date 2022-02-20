@@ -5,8 +5,7 @@
   `while true; do swaymsg -t subscribe '["workspace"]' >/dev/null && swaymsg -t get_workspaces -r | jq '[.[] | {name: .name | tonumber, focused, used: true}] + [range(1;9) | {name:., focused: false, used: false}   ] | unique_by(.name) | sort_by(.name) | [.[] | {focused, used}]' -cM; done`)
 
 (defvar sidebar-revealed "false")
-; TODO: set that back to 0 when page 2 is done
-(defvar sidebar-page 1)
+(defvar sidebar-page 0)
 ; remember to update that
 (defvar sidebar-page-max 1)
 

@@ -346,9 +346,15 @@ case "$1" in
 	"notifications")
 		rest-req "/notifications" "all=true" "GET" | jq 'map({id, unread, reason, subject, repo_url: .repository.html_url, date: .updated_at}) | sort_by(.date | fromdateiso8601) |  reverse | {read: . | map(select(.unread != true)), unread: . | map(select(.unread))}' -c
 		;;
+	# notifications, but sent to eww by the script
+	"eww_notifs")
+		(
+			eww update gh-notifs="$(~/dots/config/eww/sh/github.sh notifications)"
+		) &
+		;;
 	"read_notif")
 		rest-req "/notifications/threads/$2" "" "PATCH"
-		eww update gh-notifs="$(~/dots/config/eww/sh/github.sh notifications)"
+		~/dots/config/eww/sh/github.sh eww_notifs
 		;;
 	*)
 		;;

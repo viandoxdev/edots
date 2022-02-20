@@ -14,7 +14,7 @@
 (defpoll gh-notifs
   :interval "60s"
   :initial '{"read":[],"unread":[]}'
-  `~/dots/config/eww/sh/github.sh notifications`)
+  `~/dots/config/eww/sh/github.sh eww_notifs`)
 
 ; wether the reload button should be displayed
 (defvar gh-reload-avatar false)

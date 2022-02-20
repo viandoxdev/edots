@@ -97,9 +97,9 @@ default_border none
 title_align center
 gaps inner 20
 
-client.focused #090909 #090909 #ffffff
-client.focused_inactive #090909 #090909 #aaaaaa
-client.unfocused #090909 #191919 #aaaaaa
+client.focused #13121C #13121C #ffffff
+client.focused_inactive #13121C #13121C #aaaaaa
+client.unfocused #13121C #1E1D28 #aaaaaa
 client.urgent #ff000000 #ff000000 #ffffff
 
 titlebar_border_thickness 3
