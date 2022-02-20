@@ -108,7 +108,7 @@
             :space-evenly false
             (for notif in {gh-notifs.unread}
               (notif :notif notif)))
-          (revealer :reveal {length(gh-notifs.read) == 0}
+          (revealer :reveal {length(gh-notifs.unread) != 0}
             :duration "0s"
             :transition "slideup"
             (box :space-evenly false
